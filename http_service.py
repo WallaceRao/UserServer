@@ -9,7 +9,6 @@ import json
 import base64
 import logging
 
-import numpy as np
 import re
 import time
 import uuid
@@ -23,6 +22,7 @@ formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 handler.setFormatter(formatter)
 tts_logger.addHandler(handler)
 db_instance = DBTool()
+db_instance.init("/root/UserServer/user.db")
 
 class Handler(SimpleHTTPRequestHandler):
     def send_post_response(self, response_str):
@@ -76,7 +76,7 @@ class Handler(SimpleHTTPRequestHandler):
     
     def login(self, json_obj):
         global db_instance
-         err_msg = ""
+        err_msg = ""
         if "email" not in json_obj.keys():
             err_msg = "no email info provided"
         if "password" not in json_obj.keys():
@@ -102,7 +102,7 @@ class Handler(SimpleHTTPRequestHandler):
     
     def reset_password(self, json_obj):
         global db_instance
-         err_msg = ""
+        err_msg = ""
         if "email" not in json_obj.keys():
             err_msg = "no email info provided"
         if "password" not in json_obj.keys():
@@ -126,7 +126,7 @@ class Handler(SimpleHTTPRequestHandler):
     
     def update_password(self, json_obj):
         global db_instance
-         err_msg = ""
+        err_msg = ""
         if "email" not in json_obj.keys():
             err_msg = "no email info provided"
         if "old_password" not in json_obj.keys():
@@ -158,17 +158,17 @@ class Handler(SimpleHTTPRequestHandler):
         tts_logger.info(f"received a user request:{data_string}, req_id:{req_id}")
         json_obj = json.loads(data_string)
         if self.path == "/register":
-            register(json_obj)
+            self.register(json_obj)
         if self.path == "/login":
-            login(json_obj)
+            self.login(json_obj)
         if self.path == "/logout":
-            logout(json_obj)
+            self.logout(json_obj)
         if self.path == "/request_verification_code":
-            request_reset_password(json_obj)
+            self.request_verification_code(json_obj)
         if self.path == "/reset_password":
-            request_reset_password(json_obj)
+            self.reset_password(json_obj)
         if self.path == "/update_password":
-            reset_password(json_obj)
+            self.update_password(json_obj)
         tts_logger.info(f"finished to process tts request:{data_string}, req_id:{req_id}")
 
 def run():
@@ -177,3 +177,4 @@ def run():
 
 if __name__ == '__main__':
     run()
+

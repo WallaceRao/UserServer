@@ -21,7 +21,7 @@ tts_logger = logging.getLogger("user_service")
 
 def send_email(subject, receiver, body, sender, password, files=[]) :
     sender_email = sender
-    sender_name = "VoiceTraingService"
+    sender_name = "VoiceTrainingService"
     message = MIMEMultipart()
     message_from =  sender_name + "<" + sender_email + ">"
     message['From'] = message_from
@@ -38,7 +38,10 @@ def send_email(subject, receiver, body, sender, password, files=[]) :
                 message.attach(part) 
     text = message.as_string()
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    with smtplib.SMTP_SSL("smtp.163.com", 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver.split(','), message.as_string())
-    tts_logger.INFO(f"An verification code email has been sent to {receiver}")
+    tts_logger.info(f"An verification code email has been sent to {receiver}")
+
+if __name__ == "__main__":
+    send_email("123", "raoyonghui0630@gmail.com", "body", "voicetraining@163.com", "XGINPJYCOSKIVWMQ")
